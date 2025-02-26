@@ -24,6 +24,8 @@ panel = "^1.6.1"
 bokeh = "^3.6.3"
 jupyter-bokeh = "^4.0.5"
 modis-tools = "^1.2.0"
+geopandas = "^1.0.1"
+rasterio = "^1.4.3"
 
 
 [tool.poetry.group.dev.dependencies]
