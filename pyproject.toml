@@ -23,6 +23,7 @@ geoviews = "^1.14.0"
 panel = "^1.6.1"
 bokeh = "^3.6.3"
 jupyter-bokeh = "^4.0.5"
+modis-tools = "^1.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
