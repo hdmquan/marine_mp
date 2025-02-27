@@ -11,6 +11,10 @@ from imblearn.combine import SMOTEENN, SMOTETomek
 import random
 from scipy.interpolate import interp1d
 
+# Add these at the top after imports
+np.random.seed(42)
+random.seed(42)
+
 # %% Load and prepare data
 df = pd.read_csv(PATH.PROCESSED / "microplastics_modis_combined.csv")
 
@@ -40,11 +44,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 # %% Data Augmentation
 def add_gaussian_noise(X, noise_factor=0.05):
     """Add random Gaussian noise to features"""
+    np.random.seed(42)  # Add seed
     noise = np.random.normal(0, noise_factor, X.shape)
     return X + noise
 
 def interpolate_points(X, num_points=1):
     """Create new samples by interpolating between existing points"""
+    random.seed(42)  # Add seed
     new_samples = []
     for _ in range(num_points):
         idx1, idx2 = random.sample(range(len(X)), 2)
@@ -66,7 +72,7 @@ X_noise = pd.DataFrame(
 y_noise = y_train.copy()
 
 X_interp = interpolate_points(X_train, num_points=len(X_train) // 2)
-y_interp = y_train.sample(n=len(X_interp), replace=True).reset_index(drop=True)
+y_interp = y_train.sample(n=len(X_interp), replace=True, random_state=42).reset_index(drop=True)
 
 # Combine all augmented datasets
 X_train_balanced = pd.concat([
@@ -150,5 +156,8 @@ plot = scatter.opts(
 )
 
 plot
+
+# %%
+model.booster_.save_model(PATH.WEIGHTS / "lgbm_model.txt")
 
 # %%

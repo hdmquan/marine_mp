@@ -11,3 +11,4 @@ class PATH:
     NOTEBOOKS = SRC / "notebooks"
     SCRIPTS = SRC / "scripts"
     
+    WEIGHTS = ROOT / "weights"
