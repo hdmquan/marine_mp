@@ -249,6 +249,21 @@ def extract_modis_data(hdf_file, lat, lon):
     except Exception as e:
         logger.error(f"Failed to process {hdf_file}: {e}")
         return None
+    
+def clean_data(df):
+    # Replace any remaining NaN values with a suitable placeholder
+    df = df.replace([np.inf, -np.inf], np.nan)
+    
+    # Drop columns with more than 50% NaN values
+    df = df.dropna(axis=1, thresh=0.5 * len(df))
+    
+    # Drop rows with more than 50% NaN values
+    df = df.dropna(axis=0, thresh=0.5 * len(df.columns))
+    
+    # Print the shape of the cleaned dataframe
+    logger.info(f"Cleaned dataframe shape: {df.shape}")
+    
+    return df
 
 def main():
     # Ensure required packages are installed
@@ -309,8 +324,7 @@ def main():
         df = pd.DataFrame(results)
         
         # Basic data cleaning
-        # Replace any remaining NaN values with a suitable placeholder
-        df = df.replace([np.inf, -np.inf], np.nan)
+        df = clean_data(df)
         
         # Save the processed data
         output_file = PATH.PROCESSED / 'microplastics_modis_combined.csv'

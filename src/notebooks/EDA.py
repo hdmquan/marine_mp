@@ -11,8 +11,7 @@ hv.extension('bokeh')
 df = pd.read_csv(PATH.PROCESSED / 'microplastics_modis_combined.csv')
 
 #%% Inspect data
-
-
+df.info()
 
 #%% Basic data cleaning and preparation
 # Convert date to datetime
@@ -56,8 +55,16 @@ time_series = hv.Points(
 
 #%% Create correlation heatmap
 correlation_data = df[['mp_concentration'] + modis_bands].corr()
+
+# Convert correlation matrix to format suitable for heatmap
+heatmap_data = [(x, y, correlation_data.loc[x, y]) 
+                for x in correlation_data.index 
+                for y in correlation_data.columns]
+
 heatmap = hv.HeatMap(
-    correlation_data
+    heatmap_data,
+    kdims=['x', 'y'],
+    vdims=['Correlation']
 ).opts(
     title='Correlation Heatmap',
     width=600,
@@ -65,7 +72,9 @@ heatmap = hv.HeatMap(
     tools=['hover'],
     xrotation=45,
     colorbar=True,
-    cmap='RdBu_r'
+    cmap='RdBu_r',
+    clim=(-1, 1),  # Set correlation range from -1 to 1
+    symmetric=True  # Ensure color scheme is centered at 0
 )
 
 #%% Display plots
